@@ -1,17 +1,22 @@
-name: Node Continuous Integration
-on: push
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+
 jobs:
-  build-node:
-    name: Build Node
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x, 15.x, 16.x, 17.x, 18.x]
+
     steps:
-      - run: node --version
-        name: Check Node Version
-      - run: npm --version
-        name: Check NPM Version
-      - uses: actions/checkout@v2
-        name: Checkout Code
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
       - run: npm install
-        name: Install NPM Packages
-      - run: node app.js
-        name: Run Application
+      - run: npm start
